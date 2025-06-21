@@ -1,5 +1,11 @@
 WeeWX-Saratoga
 
+Note: this is a clone of the gjr80 last distribution (0.1.10) as the 
+gjr80 user/distributions have been removed from GitHub on 1-Jun-2025. I 
+do hope that Gary is ok. There has been no explanation on why the 
+original GitHub distributions/userid was removed. 
+
+
 The WeeWX-Saratoga extension is a WeeWX extension that supports the Saratoga 
 Weather Website Templates (https://saratoga-weather.org/wxtemplates/index.php) 
 using the WEEWX-plugin. The extension also supports the Saratoga Weather 

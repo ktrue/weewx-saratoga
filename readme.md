@@ -2,8 +2,8 @@
 
 The *WeeWX-Saratoga extension* is a *WeeWX* extension that supports the [*Saratoga Weather Website Templates*](https://saratoga-weather.org/wxtemplates/index.php) using the *WEEWX-plugin*. The extension also supports the *Saratoga Weather Website templates* [Alternative dashboard](https://saratoga-weather.org/scripts-legacy.php#scott) and can be further used to support any scripts that rely on one or more of the [Weather-Display](https://www.weather-display.com/index.php) *clientraw* family of files for operation.
 
-Note: this is a clone of the gjr80 last distribution (0.1.10) as the gjr80 user/distributions have been removed from GitHub on 1-Jun-2025.
-I do hope that Gary is ok.  There has been no explanation on why the original GitHub distributions/userid was removed.
+**Note: this is a clone of the gjr80 last distribution (0.1.10) as the gjr80 user/distributions have been removed from GitHub on 1-Jun-2025.
+I do hope that Gary is ok.  There has been no explanation on why the original GitHub distributions/userid was removed.**
 
 The *WeeWX-Saratoga extension* consists of a number of [*WeeWX* services](https://weewx.com/docs/5.0/custom/introduction/#overall-system-architecture), [Search List Extensions (SLE)](https://weewx.com/docs/5.0/custom/sle/), [XTypes](https://weewx.com/docs/5.0/custom/derived/) and [reports/skins](https://weewx.com/docs/5.0/custom/custom-reports/) that produce the following data files:
 
