@@ -3,7 +3,7 @@ wstaggedstats.py
 
 Specialised timespan stats for WeeWX-Saratoga
 
-Copyright (C) 2021-2023 Gary Roderick                gjroderick<at>gmail.com
+Copyright (C) 2021-2024 Gary Roderick                gjroderick<at>gmail.com
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -14,9 +14,16 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-Version: 0.1.7                                          Date: 31 August 2023
+Version: 0.1.10                                          Date: 1 July 2024
 
 Revision History
+    1 July 2024         v0.1.10
+        - version number change only
+    29 February 2024    v0.1.9
+        - version number change only
+    16 January 2024     v0.1.8
+        - fix bug when calculating one hour of one minute sums when there is
+          less than one hour of data in the archive
     31 August 2023      v0.1.7
         - version number change only
     24 March 2023       v0.1.6
@@ -32,7 +39,7 @@ Revision History
     21 May 2021         v0.1.1
         - version number change only
     13 May 2021         v0.1.0
-        -   initial release
+        - initial release
 """
 
 # python imports
@@ -44,7 +51,7 @@ import weewx
 import weewx.units
 import weeutil.weeutil
 
-WS_TAGGED_STATS_VERSION = '0.1.7'
+WS_TAGGED_STATS_VERSION = '0.1.10'
 
 
 # ==============================================================================
@@ -823,7 +830,7 @@ class WsArchiveObservationBinder(object):
                         try:
                             res = result_vt.value[vec_counter] * prop
                             # add our extrapolated result as a ValueHelper
-                        except (IndexError, ValueError):
+                        except (IndexError, ValueError, TypeError):
                             res = 0
                         # add our extrapolated result as a ValueHelper
                         final.append(weewx.units.ValueHelper((res, result_vt.unit, result_vt.group),

@@ -3,7 +3,7 @@ wssearchlist.py
 
 Search List Extension support for WeeWX-Saratoga.
 
-Copyright (C) 2021-2023 Gary Roderick                gjroderick<at>gmail.com
+Copyright (C) 2021-2024 Gary Roderick                gjroderick<at>gmail.com
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -14,9 +14,15 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-Version: 0.1.7                                          Date: 31 August 2023
+Version: 0.1.10                                          Date: 1 July 2024
 
 Revision History
+    1 July 2024         v0.1.10
+        - version number change only
+    29 February 2024    v0.1.9
+        - fix class ForToday 29 February bug
+    16 January 2024     v0.1.8
+        - fix for deprecation of weewx.units.UnknownType in WeeWX 5
     31 August 2023      v0.1.7
         - version number change only
     24 March 2023       v0.1.6
@@ -89,7 +95,16 @@ except ImportError:
     def logdbg(msg):
         logmsg(syslog.LOG_DEBUG, msg)
 
-WS_SLE_VERSION = '0.1.7'
+WS_SLE_VERSION = '0.1.10'
+
+
+# patch to maintain backwards compatibility with WeeWX v4
+try:
+    weewx.units.UnknownObsType = weewx.units.UnknownType
+except AttributeError:
+    # we must be running WeeWX v5 where weewx.units.UnknownObsType already
+    # exists so we can pass
+    pass
 
 
 def get_first_day(dt, d_years=0, d_months=0):
@@ -1566,9 +1581,9 @@ class YestAlmanac(weewx.cheetahgenerator.SearchList):
         if rec is not None:
             temp_vt = weewx.units.as_value_tuple(rec, 'outTemp')
             baro_vt = weewx.units.as_value_tuple(rec, 'barometer')
-            if not isinstance(temp_vt, weewx.units.UnknownType):
+            if not isinstance(temp_vt, weewx.units.UnknownObsType):
                 temp_c = weewx.units.convert(temp_vt, 'degree_C').value
-            if not isinstance(baro_vt, weewx.units.UnknownType):
+            if not isinstance(baro_vt, weewx.units.UnknownObsType):
                 baro_mbar = weewx.units.convert(baro_vt, 'mbar').value
         # if we didn't get temperature or barometer data then use sensible
         # defaults
@@ -1611,9 +1626,9 @@ class YestAlmanac(weewx.cheetahgenerator.SearchList):
         if rec is not None:
             temp_vt = weewx.units.as_value_tuple(rec, 'outTemp')
             baro_vt = weewx.units.as_value_tuple(rec, 'barometer')
-            if not isinstance(temp_vt, weewx.units.UnknownType):
+            if not isinstance(temp_vt, weewx.units.UnknownObsType):
                 temp_c = weewx.units.convert(temp_vt, 'degree_C').value
-            if not isinstance(baro_vt, weewx.units.UnknownType):
+            if not isinstance(baro_vt, weewx.units.UnknownObsType):
                 baro_mbar = weewx.units.convert(baro_vt, 'mbar').value
         # if we didn't get temperature or barometer data then use sensible
         # defaults
@@ -1888,9 +1903,15 @@ class ForToday(weewx.cheetahgenerator.SearchList):
         # get our stop month and day
         _stop_month = _stop_d.month
         _stop_day = _stop_d.day
-        # get a date object for today's day/month in the year of our first
-        # (earliest) record
-        _today_first_year_d = _stop_d.replace(year=_first_good_year)
+        # Get a date object for today's day/month in the year of our first
+        # (earliest) record. Today could be 29 February so wrap in a
+        # try..except to catch the ValueError.
+        try:
+            _today_first_year_d = _stop_d.replace(year=_first_good_year)
+        except ValueError:
+            # today is February 29, go back to February 28 in our first year
+            # of data instead
+            _today_first_year_d = _stop_d.replace(year=_first_good_year, day=28)
         # Get a date object for the first occurrence of current day/month in
         # our recorded data. Need to handle Leap years differently
         # is it a leap year?
